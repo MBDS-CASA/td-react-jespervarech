@@ -31,10 +31,11 @@ function MainContent() {
 }
 
 function Footer() {
+  const annee = new Date().getFullYear();
   return (
-    <footer className="fixed bottom-0 w-full p-4 bg-gray-100">
-      <p className="text-center">Tous droits réservés - Elenga Jesper</p>
-    </footer>
+    <div>
+      <p>© {annee} - Jesper.Elenga, Tous droits réservés.</p>
+    </div>
   )
 }
 
