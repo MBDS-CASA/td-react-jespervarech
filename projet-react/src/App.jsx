@@ -15,9 +15,17 @@ function Header() {
 }
 
 function MainContent() {
+  const today = new Date();
+  const jour = today.getDate();
+  const mois = today.getMonth() + 1;
+  const annee = today.getFullYear();
+  const heure = today.getHours();
+  const minute = today.getMinutes();
+  const seconde = today.getSeconds();
+
   return (
     <div>
-      <p>Ici, nous afficherons des informations interessantes :)</p>
+      <p>Bonjour, on est le {jour}, {mois}, {annee} et il est {heure}:{minute}:{seconde}</p>
     </div>
   )
 }
