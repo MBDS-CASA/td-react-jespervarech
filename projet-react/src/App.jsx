@@ -82,36 +82,37 @@ function NoteDetails({ item }) {
 function App() {
   const [count, setCount] = useState(0)
 
-  // État pour stocker l'élément sélectionné
   const [randomItem, setRandomItem] = useState(null);
 
   function handleRandomSelection() {
     const item = getRandomItem(data);
     setRandomItem(item);
   }
+  
+    function handleMenuClick(menuItem) {
+      alert(`Vous avez cliqué sur : ${menuItem}`);
+    }
 
   return (
     <>
+        <nav style={{ marginBottom: "20px" }}>
+            <ul style={{ display: "flex", listStyleType: "none", padding: 0, gap: "15px" }}>
+              {["Notes", "Etudiants", "Matières", "A propos"].map((item) => (
+                <li
+                  key={item}
+                  style={{ cursor: "pointer", fontWeight: "bold", color: "#007bff" }}
+                  onClick={() => handleMenuClick(item)}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </nav> 
       <div>
         <Header /> 
 
         <MainContent />
 
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + MBDS +  React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
 
       </div>
       <p className="read-the-docs">
@@ -122,8 +123,6 @@ function App() {
         <button onClick={handleRandomSelection} style={{ marginBottom: "20px", padding: "10px", fontSize: "16px" }}>
           Tirer une note au hasard
         </button>
-
-        {/* Composant pour afficher les détails */}
         <NoteDetails item={randomItem} />
       </div>
       <Footer />
