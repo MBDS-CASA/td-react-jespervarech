@@ -22,6 +22,13 @@ function MainContent() {
   )
 }
 
+function Footer() {
+  return (
+    <footer className="fixed bottom-0 w-full p-4 bg-gray-100">
+      <p className="text-center">Tous droits réservés - Elenga Jesper</p>
+    </footer>
+  )
+}
 
 
 function MenuItem({ Text}) {
@@ -44,7 +51,9 @@ function App() {
   return (
     <>
       <div>
-        <Header  name="Jesper"/> 
+        <Header /> 
+
+        <MainContent />
 
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -66,6 +75,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <Footer />
     </>
   )
 }
