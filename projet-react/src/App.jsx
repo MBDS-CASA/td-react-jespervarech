@@ -48,17 +48,18 @@ function Footer() {
   );
 }
 
-function MenuItem({ Text }) {
-  const [clickCount, setClickCount] = useState(0);
-
-  function handleClick() {
-    setClickCount(clickCount + 1);
-    console.log("click on", Text);
-  }
-
+function MenuItem({ text, selected, onClick }) {
   return (
     <li>
-      <button onClick={handleClick}>{Text} ({clickCount} clics)</button>
+      <button
+        onClick={onClick}
+        style={{
+          fontWeight: selected ? 'bold' : 'normal',
+          textDecoration: selected ? 'underline' : 'none',
+        }}
+      >
+        {text}
+      </button>
     </li>
   );
 }
@@ -82,20 +83,59 @@ function NoteDetails({ item }) {
   );
 }
 
+function Notes() {
+  return <div>Notes</div>;
+}
+
+function Etudiants() {
+  return <div>Etudiants</div>;
+}
+
+function Matieres() {
+  return <div>Matieres</div>;
+}
+
+function APropos() {
+  return <div>A propos</div>;
+}
+
 function App() {
   const [randomItem, setRandomItem] = useState(null);
+  const [selectedMenu, setSelectedMenu] = useState("Notes");
 
   function handleRandomSelection() {
     const item = getRandomItem(data);
     setRandomItem(item);
   }
 
+  const menuItems = ["Notes", "Etudiants", "Matières", "A propos"];
+
+  function renderContent() {
+    switch (selectedMenu) {
+      case "Notes":
+        return <Notes />;
+      case "Etudiants":
+        return <Etudiants />;
+      case "Matières":
+        return <Matieres />;
+      case "A propos":
+        return <APropos />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <>
       <nav style={{ marginBottom: "20px" }}>
-        <ul style={{ display: "flex", listStyleType: "none", padding: 0, gap: "15px" }}>
-          {["Notes", "Etudiants", "Matières", "A propos"].map((item) => (
-            <MenuItem key={item} Text={item} />
+        <ul style={{ display: "flex", listStyleType: "none", padding: 0, gap: "15px", alignContent: "left" }}>
+          {menuItems.map((item) => (
+            <MenuItem
+              key={item}
+              text={item}
+              selected={item === selectedMenu}
+              onClick={() => setSelectedMenu(item)}
+            />
           ))}
         </ul>
       </nav>
@@ -109,6 +149,9 @@ function App() {
           Tirer une note au hasard
         </button>
         <NoteDetails item={randomItem} />
+      </div>
+      <div>
+        {renderContent()}
       </div>
       <Footer />
     </>
