@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
+import { useState, useEffect } from 'react';
+import Logo from './assets/react.svg';
 import './App.css';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
 import data from "../data.json";
 
 function Header() {
@@ -13,7 +13,7 @@ function Header() {
 
   return (
     <div>
-      <img src={reactLogo} alt="Logo formation" />
+      <img src={Logo} alt="Logo formation" />
       <h1>{title}</h1>
       <h2>A la découverte des premières notions de React</h2>
       <button onClick={changeTitle}>Changer le titre</button>
@@ -84,8 +84,18 @@ function NoteDetails({ item }) {
   );
 }
 
-function Notes() {
-  const notesData = data.filter(item => item.course.includes('Math') || item.course.includes('Physics') || item.course.includes('Chemistry') || item.course.includes('Biology') || item.course.includes('English') || item.course.includes('History') || item.course.includes('CS'));
+function Notes({ data }) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -99,7 +109,7 @@ function Notes() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {notesData.map((note) => (
+          {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((note) => (
             <TableRow key={note.unique_id}>
               <TableCell>{note.course}</TableCell>
               <TableCell>{note.student.firstname} {note.student.lastname}</TableCell>
@@ -109,25 +119,155 @@ function Notes() {
           ))}
         </TableBody>
       </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={data.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </TableContainer>
   );
 }
 
 function Etudiants() {
-  return <div>Etudiants</div>;
+  const [studentsData, setStudentsData] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  useEffect(() => {
+    // Simulate fetching data
+    const fetchedStudents = data.map(item => item.student);
+    setStudentsData(fetchedStudents);
+  }, []);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>First Name</TableCell>
+            <TableCell>Last Name</TableCell>
+            <TableCell>ID</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {studentsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((student, index) => (
+            <TableRow key={index}>
+              <TableCell>{student.firstname}</TableCell>
+              <TableCell>{student.lastname}</TableCell>
+              <TableCell>{student.id}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={studentsData.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </TableContainer>
+  );
 }
 
-function Matieres() {
-  return <div>Matieres</div>;
+
+function Matieres({ data }) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const subjectsData = [...new Set(data.map(item => item.course))];
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Subject</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {subjectsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((subject, index) => (
+            <TableRow key={index}>
+              <TableCell>{subject}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={subjectsData.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </TableContainer>
+  );
 }
 
 function APropos() {
   return <div>A propos</div>;
 }
 
+function SearchBar({ data, onSearch }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+
+    const filteredData = data.filter((item) => 
+      item.course.toLowerCase().includes(term) ||
+      item.student.firstname.toLowerCase().includes(term) ||
+      item.student.lastname.toLowerCase().includes(term) ||
+      item.grade.toString().includes(term)
+    );
+
+    onSearch(filteredData);
+  };
+
+  return (
+    <div className="search-container">
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Rechercher par cours, étudiant ou note..."
+        value={searchTerm}
+        onChange={handleSearch}
+      />
+    </div>
+  );
+}
+
 function App() {
   const [randomItem, setRandomItem] = useState(null);
   const [selectedMenu, setSelectedMenu] = useState("Notes");
+  const [filteredData, setFilteredData] = useState(data);
 
   function handleRandomSelection() {
     const item = getRandomItem(data);
@@ -139,11 +279,11 @@ function App() {
   function renderContent() {
     switch (selectedMenu) {
       case "Notes":
-        return <Notes />;
+        return <Notes data={filteredData} />;
       case "Etudiants":
-        return <Etudiants />;
+        return <Etudiants data={filteredData} />;
       case "Matières":
-        return <Matieres />;
+        return <Matieres data={filteredData} />;
       case "A propos":
         return <APropos />;
       default:
@@ -166,8 +306,12 @@ function App() {
         </ul>
       </nav>
       <div>
+        <SearchBar data={data} onSearch={setFilteredData} />  
         <Header />
         <MainContent />
+      </div>
+      <div>
+        {renderContent()}
       </div>
       <div style={{ padding: "20px", fontFamily: "Arial", color: "#333" }}>
         <h1 style={{ color: "#fff" }}>Affichage d'une note</h1>
@@ -176,9 +320,7 @@ function App() {
         </button>
         <NoteDetails item={randomItem} />
       </div>
-      <div>
-        {renderContent()}
-      </div>
+      
       <Footer />
     </>
   );
