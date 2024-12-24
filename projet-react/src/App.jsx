@@ -1,66 +1,73 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import reactLogo from './assets/react.svg';
+import './App.css';
 import data from "../data.json";
 
-
 function Header() {
+  const [title, setTitle] = useState("Introduction à React");
+
+  function changeTitle() {
+    setTitle("Bienvenue dans React !");
+  }
+
   return (
     <div>
       <img src={reactLogo} alt="Logo formation" />
-      <h1>Introduction à React</h1>
+      <h1>{title}</h1>
       <h2>A la découverte des premières notions de React</h2>
+      <button onClick={changeTitle}>Changer le titre</button>
     </div>
-  )
+  );
 }
 
 function MainContent() {
   const today = new Date();
-  const jour = today.getDate();
-  const mois = today.getMonth() + 1;
-  const annee = today.getFullYear();
-  const heure = today.getHours();
-  const minute = today.getMinutes();
-  const seconde = today.getSeconds();
+  const [date, setDate] = useState(today);
+
+  function updateTime() {
+    setDate(new Date());
+  }
 
   return (
     <div>
-      <p>Bonjour, on est le {jour}, {mois}, {annee} et il est {heure}:{minute}:{seconde}</p>
+      <p>
+        Bonjour, on est le {date.getDate()}, {date.getMonth() + 1}, {date.getFullYear()} et il est {date.getHours()}:{date.getMinutes()}:{date.getSeconds()}
+      </p>
+      <button onClick={updateTime}>Mettre à jour l'heure</button>
     </div>
-  )
+  );
 }
 
 function Footer() {
-  const annee = new Date().getFullYear();
+  const [year, setYear] = useState(new Date().getFullYear());
+
   return (
     <div>
-      <p>© {annee} - Jesper.Elenga, Tous droits réservés.</p>
+      <p>© {year} - Jesper.Elenga, Tous droits réservés.</p>
     </div>
-  )
+  );
 }
 
+function MenuItem({ Text }) {
+  const [clickCount, setClickCount] = useState(0);
 
-function MenuItem({ Text}) {
   function handleClick() {
+    setClickCount(clickCount + 1);
     console.log("click on", Text);
   }
+
   return (
     <li>
-      <button onClick={handleClick}>{Text}</button>
+      <button onClick={handleClick}>{Text} ({clickCount} clics)</button>
     </li>
   );
 }
 
-
-// Fonction pour tirer un élément aléatoirement
 function getRandomItem(data) {
   const randomIndex = Math.floor(Math.random() * data.length);
   return data[randomIndex];
 }
 
-// Composant pour afficher les détails d'une note
 function NoteDetails({ item }) {
   if (!item) return null;
 
@@ -75,51 +82,29 @@ function NoteDetails({ item }) {
   );
 }
 
-
-
-
-
 function App() {
-  const [count, setCount] = useState(0)
-
   const [randomItem, setRandomItem] = useState(null);
 
   function handleRandomSelection() {
     const item = getRandomItem(data);
     setRandomItem(item);
   }
-  
-    function handleMenuClick(menuItem) {
-      alert(`Vous avez cliqué sur : ${menuItem}`);
-    }
 
   return (
     <>
-        <nav style={{ marginBottom: "20px" }}>
-            <ul style={{ display: "flex", listStyleType: "none", padding: 0, gap: "15px" }}>
-              {["Notes", "Etudiants", "Matières", "A propos"].map((item) => (
-                <li
-                  key={item}
-                  style={{ cursor: "pointer", fontWeight: "bold", color: "#007bff" }}
-                  onClick={() => handleMenuClick(item)}
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </nav> 
+      <nav style={{ marginBottom: "20px" }}>
+        <ul style={{ display: "flex", listStyleType: "none", padding: 0, gap: "15px" }}>
+          {["Notes", "Etudiants", "Matières", "A propos"].map((item) => (
+            <MenuItem key={item} Text={item} />
+          ))}
+        </ul>
+      </nav>
       <div>
-        <Header /> 
-
+        <Header />
         <MainContent />
-
-
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
       <div style={{ padding: "20px", fontFamily: "Arial", color: "#333" }}>
-        <h1 style={{ color : "#fff"}}>Affichage d'une note</h1>
+        <h1 style={{ color: "#fff" }}>Affichage d'une note</h1>
         <button onClick={handleRandomSelection} style={{ marginBottom: "20px", padding: "10px", fontSize: "16px" }}>
           Tirer une note au hasard
         </button>
@@ -127,7 +112,7 @@ function App() {
       </div>
       <Footer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
